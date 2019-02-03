@@ -37,7 +37,7 @@ static Std_ReturnType CanTp_CancelTransmit( PduIdType TxPduId )
     return E_OK;
 }
 
-static Std_ReturnType CanTp_CancelReceive( PduIdType RxPduId )
+Std_ReturnType CanTp_CancelReceive( PduIdType RxPduId )
 {
     return E_OK;
 }
@@ -52,7 +52,7 @@ static Std_ReturnType CanTp_ReadParameter( PduIdType id, TPParameterType paramet
     return E_OK;
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+/*
 static Std_ReturnType CanTp_ReadParameter( PduIdType id, TPParameterType parameter, int* value )
 {
     //id Identifier of the received N-SDU on which the reception parameter are read.
@@ -63,7 +63,7 @@ static Std_ReturnType CanTp_ReadParameter( PduIdType id, TPParameterType paramet
     //This service is used to read the current value of reception parameters BS and STmin for a specified N-SDU.
     return E_OK;
 }
-
+*/
 static void CanTp_RxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr )
 {
     //RxPduId ID of the received PDU.
