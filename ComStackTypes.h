@@ -1,6 +1,8 @@
 #ifndef COMSTACKTYPES_H_
 #define COMSTACKTYPES_H_
 
+#include "StandardTypes.h"
+
 typedef unsigned char PduIdType;
 typedef unsigned char PduLengthType;
 

@@ -1,4 +1,3 @@
-#include "StandardTypes.h"
 #include "ComStackTypes.h"
 
 typedef struct {
