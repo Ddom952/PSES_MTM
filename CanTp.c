@@ -84,3 +84,8 @@ void CanTp_TxConfirmation( PduIdType TxPduId, Std_ReturnType result )
 
     //The lower layer communication interface module confirms the transmission of a PDU, or the failure to transmit a PDU.
 }
+
+void CanTp_MainFunction( void )
+{
+    // The main function for scheduling the CAN TP
+}

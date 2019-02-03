@@ -44,6 +44,7 @@
 #include "CanTp.h"
 #include "CanIf.h"
 #include "PduR_CanTp.h"
+#include "SchM_CanTp.h"
 #include "gtest/gtest.h"
 namespace {
 
@@ -75,6 +76,7 @@ namespace {
 // Check empty funtion
 TEST(CanTp_CanTp_CancelReceive, Positive) {
   EXPECT_EQ( (Std_ReturnType) E_OK, CanTp_CancelReceive( (PduIdType) 11));
+  CanTp_MainFunction();
 }
 
 TEST(CanIf_Test, Positive) {
