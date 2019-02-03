@@ -1,25 +1,25 @@
 #include "CanTp.h"
 
-static void CanTp_Init( const CanTp_ConfigType* CfgPtr )
+void CanTp_Init( const CanTp_ConfigType* CfgPtr )
 {
     //CtgPtr Pointer to the CanTp post-build configuration data.
     
     //This function initializes the CanTp module.
 }
 
-static void CanTp_GetVersionInfo( Std_VersionInfoType* versioninfo )
+void CanTp_GetVersionInfo( Std_VersionInfoType* versioninfo )
 {
     //versioninfo Indicator as to where to store the version information of this module.
     
     //This function returns the version information of the CanTp module.
 }
 
-static void CanTp_Shutdown( void )
+void CanTp_Shutdown( void )
 {
     //This function returns the version information of the CanTp module.
 }
 
-static Std_ReturnType CanTp_Transmit( PduIdType TxPduId, const PduInfoType* PduInfoPtr )
+Std_ReturnType CanTp_Transmit( PduIdType TxPduId, const PduInfoType* PduInfoPtr )
 {
     //TxPduId Identifier of the PDU to be transmitted
     //PduInfoPtr Length of and pointer to the PDU data and pointer to MetaData.
@@ -32,7 +32,7 @@ static Std_ReturnType CanTp_Transmit( PduIdType TxPduId, const PduInfoType* PduI
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Tych funkcji mamy nie implementowac, tylko zostawic je puste:
-static Std_ReturnType CanTp_CancelTransmit( PduIdType TxPduId )
+Std_ReturnType CanTp_CancelTransmit( PduIdType TxPduId )
 {
     return E_OK;
 }
@@ -42,12 +42,12 @@ Std_ReturnType CanTp_CancelReceive( PduIdType RxPduId )
     return E_OK;
 }
 
-static Std_ReturnType CanTp_ChangeParameter( PduIdType id, TPParameterType parameter, int value )
+Std_ReturnType CanTp_ChangeParameter( PduIdType id, TPParameterType parameter, int value )
 {
     return E_OK;
 }
 
-static Std_ReturnType CanTp_ReadParameter( PduIdType id, TPParameterType parameter, int* value )
+Std_ReturnType CanTp_ReadParameter( PduIdType id, TPParameterType parameter, int* value )
 {
     return E_OK;
 }
@@ -64,7 +64,7 @@ static Std_ReturnType CanTp_ReadParameter( PduIdType id, TPParameterType paramet
     return E_OK;
 }
 */
-static void CanTp_RxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr )
+void CanTp_RxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr )
 {
     //RxPduId ID of the received PDU.
     //PduInfoPtr Contains the length (SduLength) of the received PDU, a pointer to a buffer (SduDataPtr) containing the PDU, and the MetaData related to this PDU.
@@ -72,7 +72,7 @@ static void CanTp_RxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr
     //Indication of a received PDU from a lower layer communication interface module.
 }
 
-static void CanTp_TxConfirmation( PduIdType TxPduId, Std_ReturnType result )
+void CanTp_TxConfirmation( PduIdType TxPduId, Std_ReturnType result )
 {
     //TxPduId ID of the PDU that has been transmitted.
 
