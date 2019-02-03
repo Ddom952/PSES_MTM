@@ -1,10 +1,13 @@
 #include "CanTp.h"
 
+unsigned char state = CANTP_OFF;
+
 void CanTp_Init( const CanTp_ConfigType* CfgPtr )
 {
     //CtgPtr Pointer to the CanTp post-build configuration data.
     
     //This function initializes the CanTp module.
+    state = CANTP_ON;
 }
 
 void CanTp_GetVersionInfo( Std_VersionInfoType* versioninfo )
@@ -17,6 +20,7 @@ void CanTp_GetVersionInfo( Std_VersionInfoType* versioninfo )
 void CanTp_Shutdown( void )
 {
     //This function returns the version information of the CanTp module.
+    state = CANTP_OFF;
 }
 
 Std_ReturnType CanTp_Transmit( PduIdType TxPduId, const PduInfoType* PduInfoPtr )

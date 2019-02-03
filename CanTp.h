@@ -22,8 +22,8 @@
 // CanTpRxNSdu
 // CanTpTxNSdu
 
-#define     CANTP_OFF
-#define     CANTP_ON
+#define     CANTP_OFF                       (0)
+#define     CANTP_ON                        (1)
 
 typedef struct {
     //Implementation specific cokolwiek to znaczy
