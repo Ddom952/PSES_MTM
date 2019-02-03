@@ -1,5 +1,5 @@
-#ifndef PDUROUTERCAN_H_
-#define PDUROUTERCAN_H_
+#ifndef PDURCANTP_H_
+#define PDURCANTP_H_
 
 #include "ComStackTypes.h"
 
@@ -11,4 +11,4 @@ BufReq_ReturnType PduR_CanTpCopyRxData( PduIdType id, const PduInfoType* info, P
 BufReq_ReturnType PduR_CanTpStartOfReception( PduIdType id, const PduInfoType* info, PduLengthType TpSduLength, PduLengthType* bufferSizePtr );
 BufReq_ReturnType PduR_CanTpCopyTxData( PduIdType id, const PduInfoType* info, const RetryInfoType* retry, PduLengthType* availableDataPtr );
 
-#endif // PDUROUTERCAN_H_
+#endif // PDURCANTP_H_

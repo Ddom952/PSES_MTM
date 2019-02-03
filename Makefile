@@ -93,8 +93,8 @@ sample1_unittest : sample1.o sample1_unittest.o $(GTEST_LIBS)
 
 #CANTP_HEADERS = $(USER_DIR)/CanTp.h $(USER_DIR)/ComStackTypes.h $(USER_DIR)/SchM_CanTp.h $(USER_DIR)/StandardTypes.h
 
-PduRouter_CAN.o : $(USER_DIR)/CanIf.c $(USER_DIR)/$(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/PduRouter_CAN.c
+PduR_CanTp.o : $(USER_DIR)/CanIf.c $(USER_DIR)/$(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/PduR_CanTp.c
 
 CanIf.o : $(USER_DIR)/CanIf.c $(USER_DIR)/$(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/CanIf.c
@@ -106,6 +106,6 @@ firstCANtest.o : $(USER_DIR)/firstCANtest.cc \
                     $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/firstCANtest.cc
 
-firstCANtest : PduRouter_CAN.o CanIf.o CanTp.o firstCANtest.o $(GTEST_LIBS)
+firstCANtest : PduR_CanTp.o CanIf.o CanTp.o firstCANtest.o $(GTEST_LIBS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -L$(GTEST_LIB_DIR) -lgtest_main -lpthread $^ -o $@
 
