@@ -3,6 +3,28 @@
 
 #include "ComStackTypes.h"
 
+// CanTpConfig
+#define     CanTpMainFunctionPeriod         (0.2)
+#define     CanTpMaxChannelCnt              (1)
+
+// CanTpGeneral
+#define     CanTpChangeParameterApi         (0)
+#define     CanTpDevErrorDetect             (0)
+#define     CanTpDynIdSupport               (0)
+#define     CanTpFlexibleDataRateSupport    (0)
+#define     CanTpGenericConnectionSupport   (0)
+#define     CanTpPaddingByte                (0xAA)
+#define     CanTpReadParameterApi           (0)
+#define     CanTpVersionInfoApi             (0)
+
+// ddoda się jak będzie potrzebne
+// CanTpChannel
+// CanTpRxNSdu
+// CanTpTxNSdu
+
+#define     CANTP_OFF
+#define     CANTP_ON
+
 typedef struct {
     //Implementation specific cokolwiek to znaczy
     //Data structure type for the post-build configuration parameters.
