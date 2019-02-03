@@ -1,3 +1,6 @@
+#ifndef CANTP_H_
+#define CANTP_H_
+
 #include "ComStackTypes.h"
 
 typedef struct {
@@ -16,3 +19,5 @@ Std_ReturnType CanTp_ReadParameter( PduIdType id, TPParameterType parameter, int
 Std_ReturnType CanTp_ReadParameter( PduIdType id, TPParameterType parameter, int* value );
 void CanTp_RxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr );
 void CanTp_TxConfirmation( PduIdType TxPduId, Std_ReturnType result );
+
+#endif // CANTP_H_

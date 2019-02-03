@@ -42,6 +42,8 @@
 
 #include <limits.h>
 #include "CanTp.h"
+#include "CanIf.h"
+#include "PduRouter_CAN.h"
 #include "gtest/gtest.h"
 namespace {
 
@@ -73,7 +75,39 @@ namespace {
 // Check empty funtion
 TEST(CanTp_CanTp_CancelReceive, Positive) {
   EXPECT_EQ( (Std_ReturnType) E_OK, CanTp_CancelReceive( (PduIdType) 11));
-  EXPECT_EQ( (Std_ReturnType) E_NOT_OK, CanTp_CancelReceive( (PduIdType) 11));
+}
+
+TEST(CanIf_Test, Positive) {
+  Set_CanIf_Return_Value(E_OK);
+  EXPECT_EQ( (Std_ReturnType) E_OK, CanIf_Transmit( 0, NULL));
+  Set_CanIf_Return_Value(E_NOT_OK);
+  EXPECT_EQ( (Std_ReturnType) E_NOT_OK, CanIf_Transmit( 0, NULL));
+}
+
+TEST(PduRouterCAN_Test, Positive) {
+  BufReq_ReturnType TestReturnType = BUFREQ_E_NOT_OK;
+  Set_PduRouter_BufReq_Return_Value( TestReturnType );
+  EXPECT_EQ(  TestReturnType, PduR_CanTpCopyRxData( 0, NULL, NULL ));
+  EXPECT_EQ(  TestReturnType, PduR_CanTpCopyTxData( 0, NULL, NULL, NULL ));
+  EXPECT_EQ(  TestReturnType, PduR_CanTpStartOfReception( 0, NULL, 0, NULL ));
+
+  TestReturnType = BUFREQ_E_BUSY;
+  Set_PduRouter_BufReq_Return_Value( TestReturnType );
+  EXPECT_EQ(  TestReturnType, PduR_CanTpCopyRxData( 0, NULL, NULL ));
+  EXPECT_EQ(  TestReturnType, PduR_CanTpCopyTxData( 0, NULL, NULL, NULL ));
+  EXPECT_EQ(  TestReturnType, PduR_CanTpStartOfReception( 0, NULL, 0, NULL ));
+
+  TestReturnType = BUFREQ_E_OVFL;
+  Set_PduRouter_BufReq_Return_Value( TestReturnType );
+  EXPECT_EQ(  TestReturnType, PduR_CanTpCopyRxData( 0, NULL, NULL ));
+  EXPECT_EQ(  TestReturnType, PduR_CanTpCopyTxData( 0, NULL, NULL, NULL ));
+  EXPECT_EQ(  TestReturnType, PduR_CanTpStartOfReception( 0, NULL, 0, NULL ));
+
+  TestReturnType = BUFREQ_OK;
+  Set_PduRouter_BufReq_Return_Value( TestReturnType );
+  EXPECT_EQ(  TestReturnType, PduR_CanTpCopyRxData( 0, NULL, NULL ));
+  EXPECT_EQ(  TestReturnType, PduR_CanTpCopyTxData( 0, NULL, NULL, NULL ));
+  EXPECT_EQ(  TestReturnType, PduR_CanTpStartOfReception( 0, NULL, 0, NULL ));
 }
 
 }  // namespace

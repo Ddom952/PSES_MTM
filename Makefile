@@ -91,15 +91,21 @@ sample1_unittest : sample1.o sample1_unittest.o $(GTEST_LIBS)
 
 # First CAN test
 
-CANTP_HEADERS = $(USER_DIR)/CanTp.h $(USER_DIR)/ComStackTypes.h $(USER_DIR)/SchM_CanTp.h $(USER_DIR)/StandardTypes.h
+#CANTP_HEADERS = $(USER_DIR)/CanTp.h $(USER_DIR)/ComStackTypes.h $(USER_DIR)/SchM_CanTp.h $(USER_DIR)/StandardTypes.h
 
-CanTp.o : $(USER_DIR)/CanTp.c $(CANTP_HEADERS) $(USER_DIR)/$(GTEST_HEADERS)
+PduRouter_CAN.o : $(USER_DIR)/CanIf.c $(USER_DIR)/$(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/PduRouter_CAN.c
+
+CanIf.o : $(USER_DIR)/CanIf.c $(USER_DIR)/$(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/CanIf.c
+
+CanTp.o : $(USER_DIR)/CanTp.c $(USER_DIR)/$(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/CanTp.c
 
 firstCANtest.o : $(USER_DIR)/firstCANtest.cc \
-                    $(CANTP_HEADERS) $(GTEST_HEADERS)
+                    $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/firstCANtest.cc
 
-firstCANtest : CanTp.o firstCANtest.o $(GTEST_LIBS)
+firstCANtest : PduRouter_CAN.o CanIf.o CanTp.o firstCANtest.o $(GTEST_LIBS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -L$(GTEST_LIB_DIR) -lgtest_main -lpthread $^ -o $@
 
