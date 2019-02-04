@@ -3,7 +3,7 @@
 
 #include "ComStackTypes.h"
 
-void Set_PduRouter_BufReq_Return_Value( BufReq_ReturnType RT );
+void PduR_CanTp_Set_BufReq_Return_Value( BufReq_ReturnType RT );
 
 void PduR_CanTpRxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr );
 void PduR_CanTpTxConfirmation(PduIdType TxPduId, Std_ReturnType result);

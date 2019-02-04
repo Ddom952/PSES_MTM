@@ -93,7 +93,7 @@ sample1_unittest : sample1.o sample1_unittest.o $(GTEST_LIBS)
 
 #CANTP_HEADERS = $(USER_DIR)/CanTp.h $(USER_DIR)/ComStackTypes.h $(USER_DIR)/SchM_CanTp.h $(USER_DIR)/StandardTypes.h
 
-PduR_CanTp.o : $(USER_DIR)/CanIf.c $(USER_DIR)/$(GTEST_HEADERS)
+PduR_CanTp.o : $(USER_DIR)/PduR_CanTp.c $(USER_DIR)/$(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/PduR_CanTp.c
 
 CanIf.o : $(USER_DIR)/CanIf.c $(USER_DIR)/$(GTEST_HEADERS)

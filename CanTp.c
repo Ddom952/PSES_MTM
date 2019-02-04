@@ -1,6 +1,18 @@
 #include "CanTp.h"
 
+#include "CanIf.h"
+#include "SchM_CanTp.h"
+#include "PduR_CanTp.h"
+
+#define NULL    (0)
+
 unsigned char state = CANTP_OFF;
+unsigned char RX_state = CANTP_OFF;
+unsigned char TX_state = CANTP_OFF;
+PduIdType TX_id = 0;
+PduIdType RX_id = 0;
+PduInfoType * TX_PduInfoPtr = NULL;
+PduInfoType * RX_PduInfoPtr = NULL;
 
 void CanTp_Init( const CanTp_ConfigType* CfgPtr )
 {
@@ -8,6 +20,13 @@ void CanTp_Init( const CanTp_ConfigType* CfgPtr )
     
     //This function initializes the CanTp module.
     state = CANTP_ON;
+    RX_state = CANTP_RX_WAIT;
+    TX_state = CANTP_TX_WAIT;
+
+    TX_id = 0;
+    RX_id = 0;
+    TX_PduInfoPtr = NULL;
+    RX_PduInfoPtr = NULL;
 }
 
 void CanTp_GetVersionInfo( Std_VersionInfoType* versioninfo )
@@ -21,6 +40,8 @@ void CanTp_Shutdown( void )
 {
     //This function returns the version information of the CanTp module.
     state = CANTP_OFF;
+    RX_state = CANTP_OFF;
+    TX_state = CANTP_OFF;
 }
 
 Std_ReturnType CanTp_Transmit( PduIdType TxPduId, const PduInfoType* PduInfoPtr )
@@ -74,6 +95,13 @@ void CanTp_RxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr )
     //PduInfoPtr Contains the length (SduLength) of the received PDU, a pointer to a buffer (SduDataPtr) containing the PDU, and the MetaData related to this PDU.
 
     //Indication of a received PDU from a lower layer communication interface module.
+
+    if ( CANTP_RX_WAIT == RX_state )
+    {
+        RX_id = RxPduId;
+        RX_PduInfoPtr = (PduInfoType*) PduInfoPtr;
+        RX_state = CANTP_RX_PROCESSING;
+    }
 }
 
 void CanTp_TxConfirmation( PduIdType TxPduId, Std_ReturnType result )
@@ -87,5 +115,20 @@ void CanTp_TxConfirmation( PduIdType TxPduId, Std_ReturnType result )
 
 void CanTp_MainFunction( void )
 {
+    BufReq_ReturnType ret = BUFREQ_E_NOT_OK;
+    PduLengthType RX_Length = 0;
+
     // The main function for scheduling the CAN TP
+    if ( CANTP_ON == state )
+    {
+        if ( CANTP_RX_PROCESSING == RX_state )
+        {
+
+            ret = PduR_CanTpStartOfReception( RX_id, RX_PduInfoPtr, RX_PduInfoPtr->SduLenght, &RX_Length);
+            if ( BUFREQ_E_NOT_OK == ret )
+            {
+                RX_state = CANTP_RX_WAIT;
+            }
+        }
+    }
 }
