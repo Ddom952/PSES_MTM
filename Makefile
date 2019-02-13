@@ -27,7 +27,7 @@ USER_DIR = .
 # the compiler doesn't generate warnings in Google Test headers.
 #CPPFLAGS += -isystem $(GTEST_DIR)/include
 #CPPFLAGS += -isystem .
-CPPFLAGS += -isystem $(GTEST_DIR)/include
+CPPFLAGS += -isystem $(GTEST_DIR)/include -D TEST
 
 # Flags passed to the C++ compiler.
 CXXFLAGS += -g -Wall -Wextra -pthread -std=c++11

@@ -45,8 +45,10 @@
 #include "CanIf.h"
 #include "PduR_CanTp.h"
 #include "SchM_CanTp.h"
-#include "windows.h"
 #include "gtest/gtest.h"
+
+extern unsigned char state;
+
 namespace {
 
 // Step 2. Use the TEST macro to define your tests.
@@ -115,6 +117,7 @@ TEST(PduRouterCAN_Test, Positive) {
 
 // 9.1 SF N-SDU received and no buffer available
 TEST(SWS_CAN_TRANSPORT_LAYER_9_1, Positive) {
+    printf("state: %d \r\n", state);
 	PduIdType CanIfId = 0;
 	unsigned char sduData[] = { 0xDE, 0xAD, 0xBE, 0xEF };
 	unsigned char metaDataPtr[] = { 0xDE, 0xAD, 0xBE, 0xEF };
@@ -130,9 +133,10 @@ TEST(SWS_CAN_TRANSPORT_LAYER_9_1, Positive) {
 	Send_CanTp_RxIndication( CanIfId, &CanIfPduInfo );
 	for ( int i = 0; i < 5; i++ )
 	{
-		Sleep(200);
         CanTp_MainFunction();
 	}
+
+    printf("state: %d \r\n", state);
 	//EXPECT_EQ(  1, 1 );
 }
 

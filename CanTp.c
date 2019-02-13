@@ -6,13 +6,19 @@
 
 #define NULL    (0)
 
-unsigned char state = CANTP_OFF;
-unsigned char RX_state = CANTP_OFF;
-unsigned char TX_state = CANTP_OFF;
-PduIdType TX_id = 0;
-PduIdType RX_id = 0;
-PduInfoType * TX_PduInfoPtr = NULL;
-PduInfoType * RX_PduInfoPtr = NULL;
+#ifndef TEST
+#define STATIC static
+#else
+#define STATIC
+#endif
+
+STATIC unsigned char state = CANTP_OFF;
+STATIC unsigned char RX_state = CANTP_OFF;
+STATIC unsigned char TX_state = CANTP_OFF;
+STATIC PduIdType TX_id = 0;
+STATIC PduIdType RX_id = 0;
+STATIC PduInfoType * TX_PduInfoPtr = NULL;
+STATIC PduInfoType * RX_PduInfoPtr = NULL;
 
 void CanTp_Init( const CanTp_ConfigType* CfgPtr )
 {
