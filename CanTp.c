@@ -78,6 +78,27 @@ Std_ReturnType CanTp_Transmit( PduIdType TxPduId, const PduInfoType* PduInfoPtr 
 
     //Requests cancellation of an ongoing transmission of a PDU in a lower layer communication module.
     return E_OK;
+    
+    
+  // slå upp channel via txsduid
+/*  sint8 channel = txNSduData[CanTpTxSduId].channel;
+  if(channel != -1) {
+    // channel busy, return error
+    return error;
+  }
+  // allocate free channel
+  channel = 31 - CountLeadingZeros(channelFreeMask);
+  if(channel < 0) {
+    // no free channel, return
+    return error
+  }
+  // clear free flag
+  channelFreeMask ^= 1 << channel;
+  txNSduData[CanTpTxSduId].channel = channel;
+  // start transmission
+  StartToTransmit(CanTpTxSduId, CanTpTxInfoPtr, channel);
+}
+*/
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
