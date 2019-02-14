@@ -11,7 +11,8 @@
 #else
 #define STATIC
 #endif
-
+'
+enum eState{CANTP_ON, CANTP_OFF, CANTP_RX_WAIT, CANTP_RX_PROCESSING};
 STATIC unsigned char state = CANTP_OFF;
 STATIC unsigned char RX_state = CANTP_OFF;
 STATIC unsigned char TX_state = CANTP_OFF;
@@ -19,6 +20,7 @@ STATIC PduIdType TX_id = 0;
 STATIC PduIdType RX_id = 0;
 STATIC PduInfoType * TX_PduInfoPtr = NULL;
 STATIC PduInfoType * RX_PduInfoPtr = NULL;
+STATIC CANTP_E_UNINIT=0;
 
 void CanTp_Init( const CanTp_ConfigType* CfgPtr )
 {
