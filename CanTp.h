@@ -22,15 +22,6 @@
 // CanTpRxNSdu
 // CanTpTxNSdu
 
-#define     CANTP_OFF                       (0)
-#define     CANTP_ON                        (1)
-
-#define     CANTP_RX_WAIT                   (2)
-#define     CANTP_RX_PROCESSING             (3)
-
-#define     CANTP_TX_WAIT                   (2)
-#define     CANTP_TX_PROCESSING             (3)
-
 typedef struct {
     //Implementation specific cokolwiek to znaczy
     //Data structure type for the post-build configuration parameters.

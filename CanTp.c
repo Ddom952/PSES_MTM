@@ -11,30 +11,47 @@
 #else
 #define STATIC
 #endif
-'
-enum eState{CANTP_ON, CANTP_OFF, CANTP_RX_WAIT, CANTP_RX_PROCESSING};
-STATIC unsigned char state = CANTP_OFF;
-STATIC unsigned char RX_state = CANTP_OFF;
-STATIC unsigned char TX_state = CANTP_OFF;
-STATIC PduIdType TX_id = 0;
-STATIC PduIdType RX_id = 0;
-STATIC PduInfoType * TX_PduInfoPtr = NULL;
-STATIC PduInfoType * RX_PduInfoPtr = NULL;
-STATIC CANTP_E_UNINIT=0;
+
+typedef enum {
+    CANTP_OFF,
+    CANTP_ON
+} CanTp_ModuleInternalStateType; //SWS_CanTp_00027
+
+typedef enum {
+    CANTP_TX_WAIT,
+    CANTP_TX_PROCESSING
+} CanTp_TransmitChannelStateType;
+
+typedef enum {
+    CANTP_RX_WAIT,
+    CANTP_RX_PROCESSING
+} CanTp_ReceiveChannelStateType;
+
+typedef struct { 
+    CanTp_ModuleInternalStateType moduleInternalState;
+    CanTp_TransmitChannelStateType transmitChannelState;
+    CanTp_ReceiveChannelStateType receiveChannelState;
+    PduIdType TX_id;
+    PduIdType RX_id;
+    PduInfoType * TX_PduInfoPtr;
+    PduInfoType * RX_PduInfoPtr;
+} CanTp_RunTimeDataType; // SWS_CanTp_00002
+
+STATIC CanTp_RunTimeDataType runTimeData;
 
 void CanTp_Init( const CanTp_ConfigType* CfgPtr )
 {
     //CtgPtr Pointer to the CanTp post-build configuration data.
     
     //This function initializes the CanTp module.
-    state = CANTP_ON;
-    RX_state = CANTP_RX_WAIT;
-    TX_state = CANTP_TX_WAIT;
+    runTimeData.moduleInternalState = CANTP_ON;
+    runTimeData.transmitChannelState = CANTP_TX_WAIT;
+    runTimeData.receiveChannelState = CANTP_RX_WAIT;
 
-    TX_id = 0;
-    RX_id = 0;
-    TX_PduInfoPtr = NULL;
-    RX_PduInfoPtr = NULL;
+    runTimeData.TX_id = 0;
+    runTimeData.RX_id = 0;
+    runTimeData.TX_PduInfoPtr = NULL;
+    runTimeData.RX_PduInfoPtr = NULL;
 }
 
 void CanTp_GetVersionInfo( Std_VersionInfoType* versioninfo )
@@ -46,10 +63,10 @@ void CanTp_GetVersionInfo( Std_VersionInfoType* versioninfo )
 
 void CanTp_Shutdown( void )
 {
-    //This function returns the version information of the CanTp module.
-    state = CANTP_OFF;
-    RX_state = CANTP_OFF;
-    TX_state = CANTP_OFF;
+    //This function is called to shutdown the CanTp module.
+    runTimeData.moduleInternalState = CANTP_OFF;
+    runTimeData.transmitChannelState = CANTP_TX_WAIT;
+    runTimeData.receiveChannelState = CANTP_RX_WAIT;
 }
 
 Std_ReturnType CanTp_Transmit( PduIdType TxPduId, const PduInfoType* PduInfoPtr )
@@ -104,11 +121,11 @@ void CanTp_RxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr )
 
     //Indication of a received PDU from a lower layer communication interface module.
 
-    if ( CANTP_RX_WAIT == RX_state )
+    if ( CANTP_RX_WAIT == runTimeData.receiveChannelState )
     {
-        RX_id = RxPduId;
-        RX_PduInfoPtr = (PduInfoType*) PduInfoPtr;
-        RX_state = CANTP_RX_PROCESSING;
+        runTimeData.RX_id = RxPduId;
+        runTimeData.RX_PduInfoPtr = (PduInfoType*) PduInfoPtr;
+        runTimeData.receiveChannelState = CANTP_RX_PROCESSING;
     }
 }
 
@@ -127,15 +144,15 @@ void CanTp_MainFunction( void )
     PduLengthType RX_Length = 0;
 
     // The main function for scheduling the CAN TP
-    if ( CANTP_ON == state )
+    if ( CANTP_ON == runTimeData.moduleInternalState )
     {
-        if ( CANTP_RX_PROCESSING == RX_state )
+        if ( CANTP_RX_PROCESSING == runTimeData.receiveChannelState )
         {
 
-            ret = PduR_CanTpStartOfReception( RX_id, RX_PduInfoPtr, RX_PduInfoPtr->SduLenght, &RX_Length);
+            ret = PduR_CanTpStartOfReception( runTimeData.RX_id, runTimeData.RX_PduInfoPtr, runTimeData.RX_PduInfoPtr->SduLenght, &RX_Length);
             if ( BUFREQ_E_NOT_OK == ret )
             {
-                RX_state = CANTP_RX_WAIT;
+                runTimeData.receiveChannelState = CANTP_RX_WAIT;
             }
         }
     }
