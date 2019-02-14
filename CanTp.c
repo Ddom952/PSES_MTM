@@ -57,7 +57,7 @@ void CanTp_Init( const CanTp_ConfigType* CfgPtr )
 void CanTp_GetVersionInfo( Std_VersionInfoType* versioninfo )
 {
     //versioninfo Indicator as to where to store the version information of this module.
-    
+    // Należy do wskaźńika przypisać odpowiednią zmienną
     //This function returns the version information of the CanTp module.
 }
 
