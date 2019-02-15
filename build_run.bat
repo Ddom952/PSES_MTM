@@ -1,2 +1,2 @@
 mingw32-make
-firstCANtest.exe
+CanTpTests.exe
