@@ -23,10 +23,3 @@ void Send_CanTp_RxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr )
 
     CanTp_RxIndication(RxPduId, PduInfoPtr);
 }
-
-/*
-void Send_CanTp_RxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr )
-{
-    CanTp_RxIndication(RxPduId, PduInfoPtr);
-}
-*/

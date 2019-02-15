@@ -33,7 +33,23 @@ typedef struct {
 
 extern CanTp_RunTimeDataType runTimeData;
 
+/* externs from PduR_CanTp */
+extern BufReq_ReturnType PduR_ReturnValue;
+extern unsigned char * PduR_buffer	;
+extern int PduR_buffer_size;
+
 namespace {
+
+void print_bytes( char * name, unsigned char * pointer, unsigned char size)
+{
+	printf("\r\n");
+	printf(name);
+	printf(":\r\n");
+	for (int i = 0; i < size; i ++) {
+        printf(" %2x", pointer[i]);
+    }
+	printf("\r\n");
+}
 
 // Check empty funtion
 TEST(CanTp_CanTp_CancelReceive, Positive) {
@@ -63,6 +79,34 @@ TEST(CanTp_Init_Shutdown_TEST, Positive) { // SWS_CanTp_00170
 
 	CanTp_Shutdown();
 	EXPECT_EQ( CANTP_OFF, runTimeData.moduleInternalState );
+}
+
+TEST(CanTp_Reception, Positive) { // Single frame send 4 bytes
+	// single frame
+	unsigned char sduData[] = { 0x00, 0xDE, 0xAD, 0xBE, 0xEF };
+	unsigned char buffer[4] = { 0x00 };
+
+	// prepare PduRouter
+	PduR_ReturnValue = BUFREQ_OK;
+	PduR_buffer = buffer;
+	PduR_buffer_size = sizeof(buffer);
+
+	PduIdType CanIfId = 0;
+	PduInfoType CanIfPduInfo;
+	CanIfPduInfo.MetaDataPtr = NULL;
+	CanIfPduInfo.SduDataPtr = sduData;
+	CanIfPduInfo.SduLenght = 4;
+
+	CanTp_Init(NULL);
+
+	Send_CanTp_RxIndication( CanIfId, &CanIfPduInfo );
+
+	print_bytes("sduData", sduData, sizeof(sduData));
+	print_bytes("buffer", buffer, sizeof(buffer));
+
+	int cmp_result = strcmp( (char *) sduData + 1, (char *) buffer );
+
+	EXPECT_EQ( cmp_result, 0 );
 }
 
 // 9.1 SF N-SDU received and no buffer available
