@@ -170,7 +170,11 @@ void CanTp_RxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr )
 			ret = PduR_CanTpStartOfReception( runTimeData.RX_id, runTimeData.RX_PduInfoPtr, runTimeData.RX_PduInfoPtr->SduLenght, &runTimeData.RX_length);
 			if ( BUFREQ_OK == ret )
 			{
-				PduR_CanTpCopyRxData(runTimeData.RX_id, runTimeData.RX_PduInfoPtr, &runTimeData.RX_length);
+				ret = PduR_CanTpCopyRxData(runTimeData.RX_id, runTimeData.RX_PduInfoPtr, &runTimeData.RX_length);
+				if ( BUFREQ_OK == ret )
+				{
+					PduR_CanTpRxIndication( runTimeData.RX_id, E_OK );
+				}
 			}
 			break;
 	

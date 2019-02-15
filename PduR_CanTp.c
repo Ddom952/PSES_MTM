@@ -11,12 +11,11 @@ void PduR_CanTp_Set_BufReq_Return_Value( BufReq_ReturnType RT )
     PduR_ReturnValue = RT;
 }
 
-void PduR_CanTpRxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr )
+void PduR_CanTpRxIndication( PduIdType RxPduId, Std_ReturnType result )
 {
     printf( "PduR_CanTpRxIndication:\r\n" );
     printf( "\tRxPduId: %d\r\n", RxPduId );
-    printf( "\tPduInfoPtr:\r\n" );
-    printf( "\t\tPduInfoPtr->SduLenght: %d\r\n", PduInfoPtr->SduLenght );
+    printf( "\result: %d\r\n", result );
 }
 
 void PduR_CanTpTxConfirmation(PduIdType TxPduId, Std_ReturnType result)
