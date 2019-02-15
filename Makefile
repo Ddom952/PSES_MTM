@@ -27,7 +27,7 @@ USER_DIR = .
 # the compiler doesn't generate warnings in Google Test headers.
 #CPPFLAGS += -isystem $(GTEST_DIR)/include
 #CPPFLAGS += -isystem .
-CPPFLAGS += -isystem $(GTEST_DIR)/include -D TEST
+CPPFLAGS += -isystem $(GTEST_DIR)/include -D TEST -Dgtest_disable_pthreads=OFF
 
 # Flags passed to the C++ compiler.
 CXXFLAGS += -g -Wall -Wextra -pthread -std=c++11
@@ -37,7 +37,7 @@ GTEST_LIBS = $(GTEST_LIB_DIR)/libgtest.a $(GTEST_LIB_DIR)/libgtest_main.a
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = firstCANtest
+TESTS = CanTpTests
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -102,10 +102,10 @@ CanIf.o : $(USER_DIR)/CanIf.c $(USER_DIR)/$(GTEST_HEADERS)
 CanTp.o : $(USER_DIR)/CanTp.c $(USER_DIR)/$(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/CanTp.c
 
-firstCANtest.o : $(USER_DIR)/firstCANtest.cc \
+CanTpTests.o : $(USER_DIR)/CanTpTests.cc \
                     $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/firstCANtest.cc
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/CanTpTests.cc
 
-firstCANtest : PduR_CanTp.o CanIf.o CanTp.o firstCANtest.o $(GTEST_LIBS)
+CanTpTests : PduR_CanTp.o CanIf.o CanTp.o CanTpTests.o $(GTEST_LIBS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -L$(GTEST_LIB_DIR) -lgtest_main -lpthread $^ -o $@
 

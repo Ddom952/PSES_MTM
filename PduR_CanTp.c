@@ -27,6 +27,10 @@ void PduR_CanTpTxConfirmation(PduIdType TxPduId, Std_ReturnType result)
 
 BufReq_ReturnType PduR_CanTpCopyRxData( PduIdType id, const PduInfoType* info, PduLengthType* bufferSizePtr )
 {
+    if ( NULL == info )
+    {
+        return PduR_ReturnValue;
+    }
     printf( "PduR_CanTpCopyRxData:\r\n" );
     printf( "\tPduR_buffer_size: %d\r\n", PduR_buffer_size );
     printf( "\tRxPduId: %d\r\n", id );

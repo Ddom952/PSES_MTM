@@ -27,12 +27,18 @@ typedef enum {
 	CANTP_RX_PROCESSING
 } CanTp_ReceiveChannelStateType;
 
-typedef enum { // Proocol Control Information
+typedef enum { // Protocol Control Information
 	PCI_SINGLE_FRAME = 0,
 	PCI_FIRST_FRAME = 1,
-	PCI_CONSETIVE_FRAME = 2,
+	PCI_CONSECUTIVE_FRAME = 2,
 	PCI_FLOW_CONTROL_FRAME = 3
 } CanTp_PCI_FrameType;
+
+typedef enum { // Flow Control Transfer Info Frame Type
+	CONTINUETOSEND = 0,
+	WAIT = 1,
+	OVERFLOW_ABORT = 2,
+} CanTp_PCI_FlowControlInfoType;
 
 typedef struct { 
 	CanTp_ModuleInternalStateType moduleInternalState;
@@ -44,12 +50,15 @@ typedef struct {
 	PduInfoType * RX_PduInfoPtr;
 	unsigned char TX_length;
 	unsigned char RX_length;
+	unsigned char RX_available_buffer;
+	unsigned char RX_consecutive_frames;
 } CanTp_RunTimeDataType; // SWS_CanTp_00002
 
 STATIC CanTp_RunTimeDataType runTimeData;
 
 /* non exported function declarations */
-CanTp_PCI_FrameType getFrameType( unsigned char first_byte );
+STATIC CanTp_PCI_FrameType getFrameType( unsigned char firstByte );
+STATIC void sendFlowControlFrame( CanTp_PCI_FlowControlInfoType frameInfo, unsigned char blockSize );
 
 void CanTp_Init( const CanTp_ConfigType* CfgPtr )
 {
@@ -164,20 +173,72 @@ void CanTp_RxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr )
 	{
 		case PCI_SINGLE_FRAME:
 			runTimeData.RX_id = RxPduId;
-			runTimeData.RX_PduInfoPtr = (PduInfoType*) PduInfoPtr;
+			runTimeData.RX_PduInfoPtr = ( PduInfoType *) PduInfoPtr;
 			runTimeData.RX_length = first_byte;
-			runTimeData.RX_PduInfoPtr->SduDataPtr = runTimeData.RX_PduInfoPtr->SduDataPtr + 1;
-			ret = PduR_CanTpStartOfReception( runTimeData.RX_id, runTimeData.RX_PduInfoPtr, runTimeData.RX_PduInfoPtr->SduLenght, &runTimeData.RX_length);
+			ret = PduR_CanTpStartOfReception( runTimeData.RX_id, runTimeData.RX_PduInfoPtr, runTimeData.RX_PduInfoPtr->SduLenght, &runTimeData.RX_available_buffer);
 			if ( BUFREQ_OK == ret )
 			{
-				ret = PduR_CanTpCopyRxData(runTimeData.RX_id, runTimeData.RX_PduInfoPtr, &runTimeData.RX_length);
+				runTimeData.RX_PduInfoPtr->SduDataPtr = runTimeData.RX_PduInfoPtr->SduDataPtr + 1;
+				runTimeData.RX_PduInfoPtr->SduLenght = runTimeData.RX_length;
+				ret = PduR_CanTpCopyRxData(runTimeData.RX_id, runTimeData.RX_PduInfoPtr, &runTimeData.RX_available_buffer);
 				if ( BUFREQ_OK == ret )
 				{
 					PduR_CanTpRxIndication( runTimeData.RX_id, E_OK );
 				}
 			}
 			break;
-	
+
+		case PCI_FIRST_FRAME:
+			runTimeData.RX_id = RxPduId;
+			runTimeData.RX_PduInfoPtr = (PduInfoType *) PduInfoPtr;
+			runTimeData.RX_length = ( ( ( first_byte & 0x0F ) << 8 ) | *( PduInfoPtr->SduDataPtr + 1) );
+			runTimeData.RX_PduInfoPtr->SduDataPtr = runTimeData.RX_PduInfoPtr->SduDataPtr + 2;
+			ret = PduR_CanTpStartOfReception( runTimeData.RX_id, runTimeData.RX_PduInfoPtr, runTimeData.RX_length, &runTimeData.RX_available_buffer);
+			if ( BUFREQ_OK == ret )
+			{
+				runTimeData.RX_PduInfoPtr->SduDataPtr = runTimeData.RX_PduInfoPtr->SduDataPtr + 2;
+				runTimeData.RX_PduInfoPtr->SduLenght = runTimeData.RX_PduInfoPtr->SduLenght - 2;
+				ret = ret = PduR_CanTpCopyRxData(runTimeData.RX_id, runTimeData.RX_PduInfoPtr, &runTimeData.RX_available_buffer);
+				if ( BUFREQ_OK == ret )
+				{
+					runTimeData.RX_length = runTimeData.RX_length - runTimeData.RX_PduInfoPtr->SduLenght;
+					runTimeData.receiveChannelState = CANTP_RX_PROCESSING;
+					
+					if ( 7 <= runTimeData.RX_available_buffer )
+					{
+						runTimeData.RX_consecutive_frames = runTimeData.RX_length / 7;
+						if ( 0 != (runTimeData.RX_length % 7) )
+						{
+							runTimeData.RX_consecutive_frames = runTimeData.RX_consecutive_frames + 1;
+						}
+						sendFlowControlFrame( CONTINUETOSEND, runTimeData.RX_consecutive_frames );
+					}
+					else
+					{
+						
+					}
+				}
+			}
+			break;
+
+		case PCI_CONSECUTIVE_FRAME:
+			runTimeData.RX_id = RxPduId;
+			runTimeData.RX_PduInfoPtr = ( PduInfoType * ) PduInfoPtr;
+			runTimeData.RX_PduInfoPtr->SduDataPtr = runTimeData.RX_PduInfoPtr->SduDataPtr + 1;
+			if ( BUFREQ_OK == ret )
+			{
+				runTimeData.RX_PduInfoPtr->SduDataPtr = runTimeData.RX_PduInfoPtr->SduDataPtr + 1;
+				runTimeData.RX_PduInfoPtr->SduLenght = runTimeData.RX_PduInfoPtr->SduLenght - 1;
+
+				ret = ret = PduR_CanTpCopyRxData(runTimeData.RX_id, runTimeData.RX_PduInfoPtr, &runTimeData.RX_available_buffer);
+				if ( BUFREQ_OK == ret )
+				{
+					runTimeData.RX_length = runTimeData.RX_length - runTimeData.RX_PduInfoPtr->SduLenght;
+					runTimeData.receiveChannelState = CANTP_RX_PROCESSING;
+				}
+			}
+			break;
+
 		default:
 			break;
 	}
@@ -213,4 +274,18 @@ CanTp_PCI_FrameType getFrameType( unsigned char first_byte )
 	unsigned char nibble = first_byte >> 4;
 
 	return ( CanTp_PCI_FrameType ) nibble;
+}
+
+void sendFlowControlFrame( CanTp_PCI_FlowControlInfoType frameInfo, unsigned char blockSize )
+{
+	unsigned char buffer[8] = { 0 };
+
+	buffer[0] = (PCI_FLOW_CONTROL_FRAME << 4) | frameInfo;
+	buffer[1] = blockSize;
+
+	PduInfoType pduInfoType;
+	pduInfoType.MetaDataPtr = NULL;
+	pduInfoType.SduDataPtr = buffer;
+	pduInfoType.SduLenght = sizeof(buffer);
+	CanIf_Transmit( runTimeData.RX_id, &pduInfoType );
 }
