@@ -218,7 +218,9 @@ TEST(SWS_CAN_TRANSPORT_9_5, Positive) { // 9.5 Large N-SDU Reception
 			bytes_to_transfer = bytes_to_transfer - copy_bytes(buffer + 1, dataPtr, 7);
 			dataPtr += 7;
 		}
-
+		
+		CanIfPduInfo.SduDataPtr = buffer;
+		CanIfPduInfo.SduLenght = sizeof(buffer);
 		Send_CanTp_RxIndication( CanIfId, &CanIfPduInfo );
 	}
 

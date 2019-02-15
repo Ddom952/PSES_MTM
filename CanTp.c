@@ -99,27 +99,6 @@ Std_ReturnType CanTp_Transmit( PduIdType TxPduId, const PduInfoType* PduInfoPtr 
 
 	//Requests cancellation of an ongoing transmission of a PDU in a lower layer communication module.
 	return E_OK;
-	
-	
-  // slå upp channel via txsduid
-/*  sint8 channel = txNSduData[CanTpTxSduId].channel;
-  if(channel != -1) {
-	// channel busy, return error
-	return error;
-  }
-  // allocate free channel
-  channel = 31 - CountLeadingZeros(channelFreeMask);
-  if(channel < 0) {
-	// no free channel, return
-	return error
-  }
-  // clear free flag
-  channelFreeMask ^= 1 << channel;
-  txNSduData[CanTpTxSduId].channel = channel;
-  // start transmission
-  StartToTransmit(CanTpTxSduId, CanTpTxInfoPtr, channel);
-}
-*/
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -225,17 +204,16 @@ void CanTp_RxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr )
 			runTimeData.RX_id = RxPduId;
 			runTimeData.RX_PduInfoPtr = ( PduInfoType * ) PduInfoPtr;
 			runTimeData.RX_PduInfoPtr->SduDataPtr = runTimeData.RX_PduInfoPtr->SduDataPtr + 1;
+			runTimeData.RX_PduInfoPtr->SduLenght = runTimeData.RX_PduInfoPtr->SduLenght - 1;
+
+			ret = PduR_CanTpCopyRxData(runTimeData.RX_id, runTimeData.RX_PduInfoPtr, &runTimeData.RX_available_buffer);
 			if ( BUFREQ_OK == ret )
 			{
-				runTimeData.RX_PduInfoPtr->SduDataPtr = runTimeData.RX_PduInfoPtr->SduDataPtr + 1;
-				runTimeData.RX_PduInfoPtr->SduLenght = runTimeData.RX_PduInfoPtr->SduLenght - 1;
-
-				ret = ret = PduR_CanTpCopyRxData(runTimeData.RX_id, runTimeData.RX_PduInfoPtr, &runTimeData.RX_available_buffer);
-				if ( BUFREQ_OK == ret )
-				{
-					runTimeData.RX_length = runTimeData.RX_length - runTimeData.RX_PduInfoPtr->SduLenght;
-					runTimeData.receiveChannelState = CANTP_RX_PROCESSING;
-				}
+				runTimeData.RX_length = runTimeData.RX_length - runTimeData.RX_PduInfoPtr->SduLenght;
+				runTimeData.receiveChannelState = CANTP_RX_PROCESSING;
+				runTimeData.RX_consecutive_frames = runTimeData.RX_consecutive_frames - 1;
+				if ( runTimeData.RX_consecutive_frames == 0 )
+					runTimeData.receiveChannelState = CANTP_RX_WAIT;
 			}
 			break;
 
