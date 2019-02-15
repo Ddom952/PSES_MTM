@@ -39,6 +39,8 @@ BufReq_ReturnType PduR_CanTpCopyRxData( PduIdType id, const PduInfoType* info, P
         *(PduR_buffer +i) = *(info->SduDataPtr + i);
     }
     printf( "\rreturn:%d\r\n", PduR_ReturnValue );
+    // write remaining buffer size to bufferSizePtr SWS_PduR_00512
+    * bufferSizePtr = PduR_buffer_size - info->SduLenght;
     return PduR_ReturnValue;
 }
 

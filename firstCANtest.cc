@@ -83,7 +83,7 @@ TEST(CanTp_Init_Shutdown_TEST, Positive) { // SWS_CanTp_00170
 
 TEST(CanTp_Reception, Positive) { // Single frame send 4 bytes
 	// single frame
-	unsigned char sduData[] = { 0x00, 0xDE, 0xAD, 0xBE, 0xEF };
+	unsigned char sduData[] = { 0x04, 0xDE, 0xAD, 0xBE, 0xEF };
 	unsigned char buffer[4] = { 0x00 };
 
 	// prepare PduRouter
